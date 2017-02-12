@@ -4,6 +4,7 @@ var assert = require('assert'),
   sinon = require('sinon'),
   faker = require('faker'),
   libxml = require('libxmljs'),
+  http = require('http'),
   config = require('./config'),
   Zoho = require('../lib');
 
@@ -63,10 +64,19 @@ describe('Zoho CRM', function () {
 
   // To assign created id;
   var created_id;
-
+  let sandbox;
   describe('Zoho Requests', function () {
+
+    before(function () {
+      sandbox = sinon.sandbox.create();
+    });
+
     beforeEach(function () {
       this.callback = sinon.spy();
+    });
+
+    afterEach(function () {
+      sandbox.restore();
     });
 
     it('should be able to make requests to Zoho server', function (done) {
@@ -78,10 +88,16 @@ describe('Zoho CRM', function () {
         assert(/Unable to process your request/.test(error.message));
         done();
       });
+    });
 
-      // setTimeout(function () {
-
-      // }.bind(this.callback), 3000);
+    it('should trigger workflows given that config is set', function (done) {
+      const _requestSpy = sandbox.spy(zohoCRM, '_request');
+      const httpRequestSpy = sandbox.spy(http, 'request');
+      this.timeout(5000);
+      zohoCRM._request('GET', 'fakeroute', {}, function (error, response) {
+        assert.equal(httpRequestSpy.args[0][0].path.indexOf('wfTrigger=true') > -1, true);
+        done();
+      });
     });
   });
 

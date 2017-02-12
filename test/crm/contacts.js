@@ -3,6 +3,7 @@
 var assert = require('assert'),
   sinon = require('sinon'),
   faker = require('faker'),
+  http = require('http'),
   libxml = require('libxmljs'),
   config = require('../config'),
   Zoho = require('../../lib');
@@ -23,8 +24,10 @@ describe('Zoho CRM', function () {
     assert(zohoCRM.port);
     assert(zohoCRM.scope);
     assert(zohoCRM.authtoken);
+    assert(zohoCRM.wfTrigger);
     assert.equal(zohoCRM.scope, config.crm.scope);
     assert.equal(zohoCRM.authtoken, config.crm.authtoken);
+    assert.equal(zohoCRM.wfTrigger, config.crm.wfTrigger);
   });
 
   it('zohoCRM should have this public functions', function () {
@@ -81,7 +84,12 @@ describe('Zoho CRM', function () {
     });
   });
 
+  let sandbox;
   describe('Create Zoho CRM records', function () {
+    beforeAll(function () {
+        sandbox = sinon.sandbox.create();
+    });
+
     beforeEach(function () {
       this.params = {
         'First Name': faker.name.firstName(),
@@ -89,6 +97,10 @@ describe('Zoho CRM', function () {
         Company: faker.company.companyName()
       };
       this.callback = sinon.spy();
+    });
+
+    afterEach(function () {
+      sandbox.restore();
     });
 
     it('should fail when trying to create a contact without params', function () {
@@ -116,8 +128,6 @@ describe('Zoho CRM', function () {
         done();
       });
     });
-
-
 
     it('should create multiple contacts', function (done) {
       this.timeout(5000);
