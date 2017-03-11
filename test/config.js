@@ -5,7 +5,8 @@ var config = require('rc')('test', {
   },
   crm: {
     authtoken: process.env.ZOHO_CRM_TOKEN || 'YouCanPutYourZohoInvoiceTokenHere',
-    scope: 'crmapi'
+    scope: 'crmapi',
+    wfTrigger: true
   },
   invoice: {
     authtoken: process.env.ZOHO_INVOICE_TOKEN || 'YouCanPutYourZohoInvoiceTokenHere'
