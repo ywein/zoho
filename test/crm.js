@@ -46,6 +46,8 @@ describe('Zoho CRM', function () {
       this.obj = {
         'First Name': faker.name.firstName(),
         'Last Name': faker.name.lastName(),
+        Email: faker.internet.email(),
+        Phone: faker.phone.phoneNumber(),
         Company: faker.company.companyName(),
         Description: 'Description & §¶e¢¥å1 ©Ã®â€£ër§'
       };
@@ -55,10 +57,12 @@ describe('Zoho CRM', function () {
       var xml = zohoCRM._build('Quotes', this.obj);
       xml = libxml.parseXml(xml);
 
-      assert(xml.get('row').child(0).text(), this.obj['First Name']);
-      assert(xml.get('row').child(1).text(), this.obj['Last Name']);
-      assert(xml.get('row').child(2).text(), this.obj.Company);
-      assert(xml.get('row').child(3).text(), this.obj.Description);
+      assert.equal(xml.get('row').child(0).text(), this.obj['First Name']);
+      assert.equal(xml.get('row').child(1).text(), this.obj['Last Name']);
+      assert.equal(xml.get('row').child(2).text(), this.obj.Email);
+      assert.equal(xml.get('row').child(3).text(), this.obj.Phone);
+      assert.equal(xml.get('row').child(4).text(), this.obj.Company);
+      assert.equal(xml.get('row').child(5).text(), this.obj.Description);
     });
   });
 
